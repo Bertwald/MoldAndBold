@@ -67,7 +67,7 @@ namespace MoldAndBold.Models {
 
             // TODO: Purge Datapoints from invalid temperature and moisture data
 
-            (List<DataPoint> inside, List<DataPoint> outside) = dataset.Split(x => x.Location.ToString() == "Inne");
+            (List<DataPoint> inside, List<DataPoint> outside) = dataset.Split(x => x.Location == Location.Inne);
             Console.WriteLine($"Number of datapoints inside: {inside.Count}");
             Console.WriteLine($"Number of datapoints outside: {outside.Count}");
 
