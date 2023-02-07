@@ -1,7 +1,9 @@
-﻿namespace MoldAndBold {
+﻿using MoldAndBold.Models;
+
+namespace MoldAndBold {
     internal class Program {
         static void Main(string[] args) {
-            Console.WriteLine("Hello, World!");
+            DataLoader.LoadData();
         }
     }
 }
