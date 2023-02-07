@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -35,21 +36,18 @@ namespace MoldAndBold.Models
 
 
                 string rows = reader.ReadToEnd();
-                MatchCollection matches = regex.Matches(rows);
+                var test = rows.Split('\n').GroupBy(x => x[..10]).ToList();
+                var matches = regex.Matches(rows).GroupBy(x => x.Groups["date"]).Select(x => x.First()).ToList();
 
                 foreach (Match match in Regex.Matches(rows, regexString))
                 {
-                    if (match.Groups.Count > 0)
+                    if (ValidateDateInput(match))
                     {
                         foreach (Group group in match.Groups)
                         {
-                            Console.WriteLine(group.Captures.Count);
+                            Console.WriteLine(group.Name + " " + group.Value);
                         }
 
-                    }
-
-                    if (ValidateInput(match))
-                    {
                         Console.WriteLine(match.Name);
                     }
                 }
@@ -57,7 +55,7 @@ namespace MoldAndBold.Models
             }
         }
 
-        private static bool ValidateInput(Match match)
+        private static bool ValidateDateInput(Match match)
         {
             return DateTime.TryParse(match.Groups["date"].ToString(), out _);
 
