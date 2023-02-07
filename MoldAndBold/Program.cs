@@ -3,7 +3,7 @@
 namespace MoldAndBold {
     internal class Program {
         static void Main(string[] args) {
-            DataLoader.LoadData();
+            DataLoader.ConstructData();
         }
     }
 }

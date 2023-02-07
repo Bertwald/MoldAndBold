@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace MoldAndBold.Models {
     internal enum Location {
         None,
-        Inside,
-        Outside
+        Inne,
+        Ute
     }
     internal class DataPoint {
         internal DateTime Date { get; set; }
