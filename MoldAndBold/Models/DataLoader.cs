@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -38,11 +39,21 @@ namespace MoldAndBold.Models
 
 
                     string rows = reader.ReadToEnd();
-                    var test = rows.Split(Environment.NewLine).GroupBy(x => x[..10]).ToList();
-                    foreach(var t in test) {
-                        Console.WriteLine($"{t.Key}: Has values");
-                        // Loop and write values
-                        // foreach()
+                    var dailyRawData = rows.Split(Environment.NewLine).GroupBy(x => x[..10]).ToList();
+                    var MonthyData = dailyRawData.GroupBy(x => x.Key[5..7]).Where(x => int.Parse(x.Key) > 5 && int.Parse(x.Key) < 13);
+                    foreach(var month in MonthyData) {
+                        Console.WriteLine($"{month.Key}: Has values");
+                        Console.WriteLine(month.ToList().Count);
+                        if (IsMonthlyDatacomplete(int.Parse(month.Key), month.ToList().Count)) {
+                            Console.WriteLine($"{month.Key}: Has complete Data");
+                        } else {
+                            Console.WriteLine($"{month.Key}: Has incomplete Data");
+                        }
+                        List<DailyData> dailyData = new();
+                        foreach (var day in month) {
+                            dailyData.Add(new DailyData { Date = DateOnly.Parse(day.Key[..10]), AverageTemperature = GetAverageTemperature(day), AverageMoisture = GetAverageMoisture(day), AverageMoldRisk = GetAverageMoldRisk(day) });
+                        }
+
                     }
 
                     //var matches = regex.Matches(rows).GroupBy(x => x.Groups["date"]).Select(x => x.First()).ToList();
@@ -68,6 +79,25 @@ namespace MoldAndBold.Models
             }
         }
 
+        private static double GetAverageMoldRisk() {
+            throw new NotImplementedException();
+        }
+        //private static double GetAverage<T>(IEnumerable<T> values) where T :  {
+        //    return (double)values.Sum(x => x) / values.Count;
+        //}
+        private static double GetAverageMoisture(List<int> moistures) {
+            return (double)moistures.Sum(x => x) / moistures.Count;
+        }
+
+        private static double GetAverageTemperature(List<double> temperatures) {
+            return temperatures.Sum(x => x) / temperatures.Count;
+        }
+
+        private static bool IsMonthlyDatacomplete(int month, int daysWithData) {
+            double threshold = 0.5D;
+            int TotalDaysInMonth = DateTime.DaysInMonth(2016,month);
+            return (double)daysWithData/TotalDaysInMonth >= threshold;
+        }
         private static bool ValidateDate(Match match)
         {
             return DateTime.TryParse(match.Groups["date"].ToString(), out _);
