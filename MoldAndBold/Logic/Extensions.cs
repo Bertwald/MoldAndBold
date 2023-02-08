@@ -27,6 +27,14 @@ namespace MoldAndBold.Logic {
             }
             return result.ToDouble(null) / values.Count();
         }
+
+        public static T GetMeanTypeValue<T>(this IEnumerable<T> values) where T : INumber<T>, IParsable<T> {
+            T result = T.Zero;
+            foreach (T value in values) {
+                result += value;
+            }
+            return result / T.Parse(values.Count().ToString(), null);
+        }
     }
 
 }

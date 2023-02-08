@@ -31,7 +31,7 @@ namespace MoldAndBold.Models {
             string rows = LoadTempData();
             //string regexString11 = """(?<date>\d{4}-\d{2}-\d{2}) (?<time>\d{2}:\d{2}:\d{2}),(?<location>Inne|Ute),(?<temp>-?\d{1,2}.\d{1,2}),(?<moisture>\d{1,2})""";
             string regexString = "(?<date>\\d{4}-\\d{2}-\\d{2}) (?<time>\\d{2}:\\d{2}:\\d{2}),(?<location>Inne|Ute),(?<temp>-?\\d{1,2}.\\d{1,2}),(?<moisture>\\d{1,2})";
-            
+
 
             //var dailyRawData = rows.Split(Environment.NewLine).GroupBy(x => x[..10]).ToList();
             //var MonthyData = dailyRawData.GroupBy(x => x.Key[5..7]).Where(x => int.Parse(x.Key) > 5 && int.Parse(x.Key) < 13);
@@ -61,6 +61,9 @@ namespace MoldAndBold.Models {
 
             //}
 
+            Console.WriteLine($"Double avg: {(new List<double> { 1.0D, 1.0D, 8.0D }).GetMeanTypeValue()}");
+            Console.WriteLine($"Integer avg: {(new List<int> { 1, 1, 8 }).GetMeanTypeValue()}");
+
 
             List<DataPoint> dataset = ConstructDataset(rows);
             Console.WriteLine($"Number of datapoints: {dataset.Count}");
@@ -71,6 +74,11 @@ namespace MoldAndBold.Models {
             Console.WriteLine($"Number of datapoints inside: {inside.Count}");
             Console.WriteLine($"Number of datapoints outside: {outside.Count}");
 
+            Console.WriteLine($"Inside Maxii : {inside.Select(x => x.Temperature).Max()}    {inside.Select(x => x.Moisture).Max()}");
+            Console.WriteLine($"Outside Maxii : {outside.Select(x => x.Temperature).Max()}    {outside.Select(x => x.Moisture).Max()}");
+
+            Console.WriteLine($"Inside Minimii : {inside.Select(x => x.Temperature).Min()}    {inside.Select(x => x.Moisture).Min()}");
+            Console.WriteLine($"Outside Minimii: {outside.Select(x => x.Temperature).Min()}    {outside.Select(x => x.Moisture).Min()}");
 
             Console.WriteLine($"Inside avg: {inside.Select(x => x.Temperature).Average()}");
             Console.WriteLine($"Outside avg: {outside.Select(x => x.Temperature).Average()}");
