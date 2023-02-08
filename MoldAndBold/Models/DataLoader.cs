@@ -81,6 +81,7 @@ namespace MoldAndBold.Models
             var outsideDailyData = PurgeTemperatureDataPoints(outside).GroupBy(x => x.Date.Date);
 
             var daysInside = ConstructDailyData(insideDailyData);
+            var daysoutside = ConstructDailyData(outsideDailyData);
 
             Console.WriteLine($"Number of datapoints inside: {inside.Count}");
             Console.WriteLine($"Number of datapoints outside: {outside.Count}");
@@ -93,10 +94,13 @@ namespace MoldAndBold.Models
 
             Console.WriteLine($"Inside avg: {inside.Select(x => x.Temperature).Average()}");
             Console.WriteLine($"Outside avg: {outside.Select(x => x.Temperature).Average()}");
-            //TODO: Handle inside and outside Datapoints in own methods
-            ConstructInsideSeries(inside);
-            ConstructOutsideSeries(outside);
-            //TODO: 
+
+            List<DailyData> winterDays = daysoutside.Where(x => x.AverageTemperature < 0).ToList();
+            List<DailyData> autumnDays = daysoutside.Where(x => x.AverageTemperature < 10 && x.Date >= new DateOnly(2016, 08, 01)).ToList();
+
+            var autumnDate = GetSwedishMeteorologicalAutumn(autumnDays);
+            var winterDate = FiveDaysInARow(winterDays);
+
 
 
 
@@ -136,6 +140,31 @@ namespace MoldAndBold.Models
             //}
         }
 
+        private static DateOnly GetSwedishMeteorologicalAutumn(List<DailyData> autumnDays)
+        {
+            return FiveDaysInARow(autumnDays) ?? new DateOnly(2017, 02, 14);
+            
+        }
+
+        private static DateOnly? FiveDaysInARow(List<DailyData> days)
+        {
+            for (int start = 0; start < days.Count - 5; start++)
+            {
+                for (int offset = 1; offset < 5; offset++)
+                {
+                    if (days[start].Date.AddDays(offset) != days[start + offset].Date)
+                    {
+                        break;
+                    }
+                    if (offset == 4)
+                    {
+                        return days[start].Date;
+                    }
+                }
+            }
+            return null;
+        }
+
         private static List<DailyData> ConstructDailyData(IEnumerable<IGrouping<DateTime, DataPoint>> dailyDataPoints)
         {
             var dailyDatas = new List<DailyData>();
@@ -150,8 +179,15 @@ namespace MoldAndBold.Models
                     AverageMoisture = avarageMoisture,
                     AverageMoldRisk = GetMoldRisk(avarageTemperature, avarageMoisture)
                 });
-                
+
             }
+            //dailyDatas.Add(new DailyData()
+            //{
+            //    Date = DateOnly.FromDateTime(DateTime.Now),
+            //    AverageTemperature = 40,
+            //    AverageMoisture = 85,
+            //    AverageMoldRisk = GetMoldRisk(40, 85)
+            //});
             return dailyDatas;
         }
 
@@ -219,8 +255,14 @@ namespace MoldAndBold.Models
 
         private static double GetMoldRisk(double temperature, double moisture)
         {
-            // TODO: Här slutade vi
-            return 0;
+            if (temperature < 0 || temperature > 50 || moisture < 60)
+            {
+                return 0;
+            }
+            else
+            {
+                return Math.Max(100 - 1.5 * (100 - moisture) - ((temperature > 30 ? 1.5 : 1) * (Math.Abs(30 - temperature))) - (Math.Abs(30 - temperature)) * (moisture) / 100, 0);
+            }
         }
         //private static double GetAverage<T>(IEnumerable<T> values) where T : IEnumerable<T> {
         //    return values.Sum(x => x) / values.Count;
