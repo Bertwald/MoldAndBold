@@ -10,11 +10,15 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using System.Numerics;
+using System.ComponentModel;
 
-namespace MoldAndBold.Models {
-    internal class DataLoader {
+namespace MoldAndBold.Models
+{
+    internal class DataLoader
+    {
 
-        internal static List<DataPoint> GetDailyData() {
+        internal static List<DataPoint> GetDailyData()
+        {
 
             // Check if data exists in aggregated file
             // If No
@@ -27,7 +31,8 @@ namespace MoldAndBold.Models {
             return new List<DataPoint>();
         }
 
-        internal static void ConstructData() {
+        internal static void ConstructData()
+        {
             string rows = LoadTempData();
             //string regexString11 = """(?<date>\d{4}-\d{2}-\d{2}) (?<time>\d{2}:\d{2}:\d{2}),(?<location>Inne|Ute),(?<temp>-?\d{1,2}.\d{1,2}),(?<moisture>\d{1,2})""";
             string regexString = "(?<date>\\d{4}-\\d{2}-\\d{2}) (?<time>\\d{2}:\\d{2}:\\d{2}),(?<location>Inne|Ute),(?<temp>-?\\d{1,2}.\\d{1,2}),(?<moisture>\\d{1,2})";
@@ -61,16 +66,22 @@ namespace MoldAndBold.Models {
 
             //}
 
-            Console.WriteLine($"Double avg: {(new List<double> { 1.0D, 1.0D, 8.0D }).GetMeanTypeValue()}");
-            Console.WriteLine($"Integer avg: {(new List<int> { 1, 1, 8 }).GetMeanTypeValue()}");
+            //Console.WriteLine($"Double avg: {(new List<double> { 1.0D, 1.0D, 8.0D }).GetMeanTypeValue()}");
+            //Console.WriteLine($"Integer avg: {(new List<int> { 1, 1, 8 }).GetMeanTypeValue()}");
 
 
             List<DataPoint> dataset = ConstructDataset(rows);
+            dataset = PurgeDateDataPoints(dataset, new DateTime(2016, 06, 01), new DateTime(2017, 01, 01));
             Console.WriteLine($"Number of datapoints: {dataset.Count}");
 
-            // TODO: Purge Datapoints from invalid temperature and moisture data
+            // TODO: Purge Datapoints from invalid moisture data (framtidssäkra)
 
             (List<DataPoint> inside, List<DataPoint> outside) = dataset.Split(x => x.Location == Location.Inne);
+            var insideDailyData = PurgeTemperatureDataPoints(inside).GroupBy(x => x.Date.Date);
+            var outsideDailyData = PurgeTemperatureDataPoints(outside).GroupBy(x => x.Date.Date);
+
+            var daysInside = ConstructDailyData(insideDailyData);
+
             Console.WriteLine($"Number of datapoints inside: {inside.Count}");
             Console.WriteLine($"Number of datapoints outside: {outside.Count}");
 
@@ -125,34 +136,76 @@ namespace MoldAndBold.Models {
             //}
         }
 
-        private static void ConstructOutsideSeries(List<DataPoint> outside) {
+        private static List<DailyData> ConstructDailyData(IEnumerable<IGrouping<DateTime, DataPoint>> dailyDataPoints)
+        {
+            var dailyDatas = new List<DailyData>();
+            foreach (var day in dailyDataPoints)
+            {
+                var avarageTemperature = day.Select(x => x.Temperature).Average();
+                var avarageMoisture = day.Select(x => x.Moisture).Average();
+                dailyDatas.Add(new DailyData()
+                {
+                    Date = DateOnly.FromDateTime(day.Key),
+                    AverageTemperature = avarageTemperature,
+                    AverageMoisture = avarageMoisture,
+                    AverageMoldRisk = GetMoldRisk(avarageTemperature, avarageMoisture)
+                });
+                
+            }
+            return dailyDatas;
+        }
+
+        private static List<DataPoint> PurgeTemperatureDataPoints(List<DataPoint> list)
+        {
+            // TODO: If time, repare faulted data
+            if (list[0].Location == Location.Inne)
+                return list.Where(x => x.Temperature < 40 && x.Temperature > 16).ToList();
+            else
+                return list.Where(x => x.Temperature < 50 && x.Temperature > -30).ToList();
+        }
+
+        private static List<DataPoint> PurgeDateDataPoints(List<DataPoint> list, DateTime startDate, DateTime endDate)
+        {
+            return list.Where(x => x.Date < endDate && x.Date >= startDate).ToList();
+        }
+
+        private static void ConstructOutsideSeries(List<DataPoint> outside)
+        {
             throw new NotImplementedException();
         }
 
-        private static void ConstructInsideSeries(List<DataPoint> inside) {
+        private static void ConstructInsideSeries(List<DataPoint> inside)
+        {
             throw new NotImplementedException();
         }
 
-        private static string LoadTempData() {
-            try {
+        private static string LoadTempData()
+        {
+            try
+            {
                 string rows;
-                using (StreamReader reader = new("../../../" + "LocalOnly/tempdata5-med fel.txt")) {
+                using (StreamReader reader = new("../../../" + "LocalOnly/tempdata5-med fel.txt"))
+                {
                     rows = reader.ReadToEnd();
                 }
                 return rows;
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Console.WriteLine("A File could not be used:");
                 Console.WriteLine(e.Message);
             }
             return String.Empty;
         }
 
-        private static List<DataPoint> ConstructDataset(string rows) {
+        private static List<DataPoint> ConstructDataset(string rows)
+        {
             Regex regex = new("(?<date>\\d{4}-\\d{2}-\\d{2}) (?<time>\\d{2}:\\d{2}:\\d{2}),(?<location>Inne|Ute),(?<temp>-?\\d{1,2}.\\d{1,2}),(?<moisture>\\d{1,2})");
             List<DataPoint> dataset = new();
-            foreach (Match match in regex.Matches(rows).Where(x => ValidateDate(x.Groups["date"].Value) && ValidateTime(x.Groups["time"].Value))) {
-                dataset.Add(new DataPoint() {
+            foreach (Match match in regex.Matches(rows).Where(x => ValidateDate(x.Groups["date"].Value) && ValidateTime(x.Groups["time"].Value)))
+            {
+                dataset.Add(new DataPoint()
+                {
                     Date = DateTime.Parse(match.Groups["date"].Value + " " + match.Groups["time"].Value),
                     Location = (Location)Enum.Parse(typeof(Location), match.Groups["location"].Value),
                     Moisture = int.Parse(match.Groups["moisture"].Value),
@@ -164,46 +217,58 @@ namespace MoldAndBold.Models {
         }
 
 
-        private static double GetAverageMoldRisk() {
-            throw new NotImplementedException();
+        private static double GetMoldRisk(double temperature, double moisture)
+        {
+            // TODO: Här slutade vi
+            return 0;
         }
         //private static double GetAverage<T>(IEnumerable<T> values) where T : IEnumerable<T> {
         //    return values.Sum(x => x) / values.Count;
         //}
-        private static double GetAverageMoisture(List<int> moistures) {
+        private static double GetAverageMoisture(List<int> moistures)
+        {
             return (double)moistures.Sum(x => x) / moistures.Count;
         }
 
-        private static double GetAverageTemperature(List<double> temperatures) {
+        private static double GetAverageTemperature(List<double> temperatures)
+        {
             return temperatures.Sum(x => x) / temperatures.Count;
         }
 
-        private static bool IsMonthlyDatacomplete(int month, int daysWithData) {
+        private static bool IsMonthlyDatacomplete(int month, int daysWithData)
+        {
             double threshold = 0.5D;
             int TotalDaysInMonth = DateTime.DaysInMonth(2016, month);
             return (double)daysWithData / TotalDaysInMonth >= threshold;
         }
-        private static bool ValidateDate(string date) {
+        private static bool ValidateDate(string date)
+        {
             return DateTime.TryParse(date, out _);
 
         }
-        private static bool ValidateTime(string time) {
+        private static bool ValidateTime(string time)
+        {
             return TimeOnly.TryParse(time, out _);
         }
-        private static bool ValidateTemperature(Match match) {
+        private static bool ValidateTemperature(Match match)
+        {
             return true;
         }
-        private static bool ValidateMoisture(Match match) {
+        private static bool ValidateMoisture(Match match)
+        {
             return true;
         }
 
-        internal void GenerateAggregatedData() {
+        internal void GenerateAggregatedData()
+        {
             ConstructData();
         }
-        internal void SaveAggregatedData() {
+        internal void SaveAggregatedData()
+        {
 
         }
-        internal DailyData GetStatistics(DateOnly date) {
+        internal DailyData GetStatistics(DateOnly date)
+        {
 
 
             return new DailyData { };
