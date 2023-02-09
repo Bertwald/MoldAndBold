@@ -1,6 +1,7 @@
 ﻿using MoldAndBold.Logic;
 using System.Data;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace MoldAndBold.Models
@@ -171,18 +172,40 @@ namespace MoldAndBold.Models
 
         private static (IEnumerable<AnnualData> inside, IEnumerable<AnnualData> outside) GenerateYears(IEnumerable<IGrouping<int, MonthlyData>> monthsInside, IEnumerable<IGrouping<int, MonthlyData>> monthsOutside)
         {
-            foreach (var item in collection)
-            {
+            IEnumerable<AnnualData> inside = new List<AnnualData>(), outside = new List<AnnualData>();
 
+            var outsideMonthsGroupedByYear = monthsOutside.GroupBy(x => x.ToList().Select(x => x.Year));
+            var insideMonthsGroupedByYear = monthsInside.GroupBy(x => x.ToList().Select(x => x.Year));
+            int start = insideMonthsGroupedByYear.SelectMany(x => x.Key).Min();
+            int end = insideMonthsGroupedByYear.SelectMany(x => x.Key).Max();
+            for (int year = start; year <= end; year++){
+                Console.WriteLine(year);
+                var daysInYear = outsideMonthsGroupedByYear.Where(x => x.Key.Contains(year)).ToList().SelectMany(x => x);
+                //var winterDays = ;
+                //var autumnDays = ;
             }
-            List<DailyData> winterDays = monthsOutside.GroupBy(x => x.ToList()).Where(x => x.AverageTemperature < 0).ToList();
+
+            //foreach(var y in insideMonthsGroupedByYear) {
+            //    var monthsInYear = y.ToList();
+            //    var daysInYear = y.ToList().SelectMany(x => x).SelectMany(x => x.Days);
+            //    List<DailyData> winterDays;
+            //    List<DailyData> autumnDays;
+
+
+            //}
+            //foreach (var y in outsideMonthsGroupedByYear) {
+
+            //}
+
+            /*
+            List<DailyData> winterDays = monthsOutside.GroupBy(x => x.ToList().Select(x => x.Year)) //.Where(x => x.ToList().Select(x => x.ToList().Select(x => x.ToList().Select)) < 0).ToList();
             List<DailyData> autumnDays = daysOutside.Where(x => x.AverageTemperature < 10 && x.Date >= new DateOnly(2016, 08, 01)).ToList();
+            */
+            //var autumnDate = GetSwedishMeteorologicalAutumn(autumnDays);
+            //var winterDate = FiveDaysInARow(winterDays);
 
-            var autumnDate = GetSwedishMeteorologicalAutumn(autumnDays);
-            var winterDate = FiveDaysInARow(winterDays);
-
-            var yearsInside = (from m in monthsInside let monthsInsideAtYear = m.ToList() select new AnnualData(monthsInsideAtYear, autumnDate, winterDate));
-            var yearsOutside = (from m in monthsOutside let monthsOutsideAtYear = m.ToList() select new AnnualData(monthsOutsideAtYear, autumnDate, winterDate));
+            var yearsInside = (from m in monthsInside let monthsInsideAtYear = m.ToList() select new AnnualData(monthsInsideAtYear, DateOnly.FromDayNumber(0), DateOnly.FromDayNumber(0)));
+            var yearsOutside = (from m in monthsOutside let monthsOutsideAtYear = m.ToList() select new AnnualData(monthsOutsideAtYear, DateOnly.FromDayNumber(0), DateOnly.FromDayNumber(0)));
             return (yearsInside, yearsOutside);
         }
 

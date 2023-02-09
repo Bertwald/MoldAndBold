@@ -16,6 +16,7 @@ namespace MoldAndBold.Enums {
         July,
         August,
         September,
+        October,
         November,
         December
     }
