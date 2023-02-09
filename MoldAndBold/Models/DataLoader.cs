@@ -1,19 +1,8 @@
 ﻿using MoldAndBold.Logic;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
-using System.Numerics;
-using System.ComponentModel;
 
-namespace MoldAndBold.Models
-{
+namespace MoldAndBold.Models {
     internal class DataLoader
     {
 
@@ -71,7 +60,7 @@ namespace MoldAndBold.Models
 
 
             List<DataPoint> dataset = ConstructDataset(rows);
-            dataset = PurgeDateDataPoints(dataset, new DateTime(2016, 06, 01), new DateTime(2017, 01, 01));
+            dataset = PurgeDateDataPoints(dataset, new DateTime(2015, 06, 01), new DateTime(2018, 01, 01));
             Console.WriteLine($"Number of datapoints: {dataset.Count}");
 
             // TODO: Purge Datapoints from invalid moisture data (framtidssäkra)
@@ -81,7 +70,7 @@ namespace MoldAndBold.Models
             var outsideDailyData = PurgeTemperatureDataPoints(outside).GroupBy(x => x.Date.Date);
 
             var daysInside = ConstructDailyData(insideDailyData);
-            var daysoutside = ConstructDailyData(outsideDailyData);
+            var daysOutside = ConstructDailyData(outsideDailyData);
 
             Console.WriteLine($"Number of datapoints inside: {inside.Count}");
             Console.WriteLine($"Number of datapoints outside: {outside.Count}");
@@ -95,14 +84,20 @@ namespace MoldAndBold.Models
             Console.WriteLine($"Inside avg: {inside.Select(x => x.Temperature).Average()}");
             Console.WriteLine($"Outside avg: {outside.Select(x => x.Temperature).Average()}");
 
-            List<DailyData> winterDays = daysoutside.Where(x => x.AverageTemperature < 0).ToList();
-            List<DailyData> autumnDays = daysoutside.Where(x => x.AverageTemperature < 10 && x.Date >= new DateOnly(2016, 08, 01)).ToList();
+            List<DailyData> winterDays = daysOutside.Where(x => x.AverageTemperature < 0).ToList();
+            List<DailyData> autumnDays = daysOutside.Where(x => x.AverageTemperature < 10 && x.Date >= new DateOnly(2016, 08, 01)).ToList();
 
             var autumnDate = GetSwedishMeteorologicalAutumn(autumnDays);
             var winterDate = FiveDaysInARow(winterDays);
 
+            IEnumerable<List<DailyData>> InsideGroupedByMonth = daysInside.GroupBy(x => x.Date.Month).Select(x => x.ToList());
+            IEnumerable<List<DailyData>> OutsideGroupedByMonth = daysOutside.GroupBy(x => x.Date.Month).Select(x => x.ToList());
 
+            var monthsInside = (from m in InsideGroupedByMonth let mdays = m.ToList() select new MonthlyData(mdays)).ToList().GroupBy(x => x.Year);
+            var monthsOutside = (from m in OutsideGroupedByMonth let mdays = m.ToList() select new MonthlyData(mdays)).ToList().GroupBy(x => x.Year);
 
+            var yearsInside = (from m in monthsInside let monthsInsideAtYear = m.ToList() select new AnnualData(monthsInsideAtYear, autumnDate, winterDate));
+            var yearsOutside = (from m in monthsOutside let monthsOutsideAtYear = m.ToList() select new AnnualData(monthsOutsideAtYear, autumnDate, winterDate));
 
 
 
@@ -172,13 +167,13 @@ namespace MoldAndBold.Models
             {
                 var avarageTemperature = day.Select(x => x.Temperature).Average();
                 var avarageMoisture = day.Select(x => x.Moisture).Average();
-                dailyDatas.Add(new DailyData()
-                {
+                dailyDatas.Add(new DailyData() {
                     Date = DateOnly.FromDateTime(day.Key),
                     AverageTemperature = avarageTemperature,
                     AverageMoisture = avarageMoisture,
-                    AverageMoldRisk = GetMoldRisk(avarageTemperature, avarageMoisture)
-                });
+                    AverageMoldRisk = GetMoldRisk(avarageTemperature, avarageMoisture),
+                    Location = day.ToList()[0].Location
+                }) ;
 
             }
             //dailyDatas.Add(new DailyData()

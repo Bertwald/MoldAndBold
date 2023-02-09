@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace MoldAndBold.Models {
     internal class DailyData {
         internal DateOnly Date { get; set; }
@@ -12,5 +7,6 @@ namespace MoldAndBold.Models {
         internal double AverageTemperature { get; set; }
         internal double AverageMoldRisk { get; set; }
         internal double AverageMoisture { get; set; }
+        internal Location Location { get; set; }
     }
 }
