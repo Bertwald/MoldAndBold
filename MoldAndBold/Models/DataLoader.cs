@@ -1,8 +1,10 @@
 ﻿using MoldAndBold.Logic;
+using System.Data;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace MoldAndBold.Models {
+namespace MoldAndBold.Models
+{
     internal class DataLoader
     {
 
@@ -23,122 +25,15 @@ namespace MoldAndBold.Models {
         internal static void ConstructData()
         {
             string rows = LoadTempData();
-            //string regexString11 = """(?<date>\d{4}-\d{2}-\d{2}) (?<time>\d{2}:\d{2}:\d{2}),(?<location>Inne|Ute),(?<temp>-?\d{1,2}.\d{1,2}),(?<moisture>\d{1,2})""";
-            string regexString = "(?<date>\\d{4}-\\d{2}-\\d{2}) (?<time>\\d{2}:\\d{2}:\\d{2}),(?<location>Inne|Ute),(?<temp>-?\\d{1,2}.\\d{1,2}),(?<moisture>\\d{1,2})";
 
-
-            //var dailyRawData = rows.Split(Environment.NewLine).GroupBy(x => x[..10]).ToList();
-            //var MonthyData = dailyRawData.GroupBy(x => x.Key[5..7]).Where(x => int.Parse(x.Key) > 5 && int.Parse(x.Key) < 13);
-
-            //foreach (var month in MonthyData) {
-
-
-            //    Console.WriteLine($"{month.Key}: Has values");
-            //    Console.WriteLine(month.ToList().Count);
-            //    if (IsMonthlyDatacomplete(int.Parse(month.Key), month.ToList().Count)) {
-            //        Console.WriteLine($"{month.Key}: Has complete Data");
-            //    } else {
-            //        Console.WriteLine($"{month.Key}: Has incomplete Data");
-            //    }
-            //    List<DailyData> dailyIndoorData = new();
-            //    List<DailyData> dailyOutdoorData = new();
-            //    //var locationData = month.GroupBy(x => x.Key[20..])
-
-            //    //foreach (var day in month) {
-            //    //    var matches = regex.Matches(string.Join(' ', day.ToList()));
-            //    //    var locationMatches = matches.GroupBy(x => x.Groups["location"]);
-            //    //    IEnumerable<string> dailyTemps, dailyMoists;
-            //    //        dailyTemps = locationMatches.Select(x => x.Groups["temp"].Value);
-            //    //        dailyMoists = locationMatches.Select(x => x.Groups["moisture"].Value);
-            //    //    //dailyIndoorData.Add(new DailyData { Date = DateOnly.Parse(day.Key[..10]), AverageTemperature = GetAverageTemperature(), AverageMoisture = GetAverageMoisture(day), AverageMoldRisk = GetAverageMoldRisk(day) });
-            //    //}
-
-            //}
-
-            //Console.WriteLine($"Double avg: {(new List<double> { 1.0D, 1.0D, 8.0D }).GetMeanTypeValue()}");
-            //Console.WriteLine($"Integer avg: {(new List<int> { 1, 1, 8 }).GetMeanTypeValue()}");
-
-
-            List<DataPoint> dataset = ConstructDataset(rows);
-            dataset = PurgeDateDataPoints(dataset, new DateTime(2015, 06, 01), new DateTime(2018, 01, 01));
-            Console.WriteLine($"Number of datapoints: {dataset.Count}");
-
-            // TODO: Purge Datapoints from invalid moisture data (framtidssäkra)
-
-            (List<DataPoint> inside, List<DataPoint> outside) = dataset.Split(x => x.Location == Location.Inne);
-            var insideDailyData = PurgeTemperatureDataPoints(inside).GroupBy(x => x.Date.Date);
-            var outsideDailyData = PurgeTemperatureDataPoints(outside).GroupBy(x => x.Date.Date);
-
-            var daysInside = ConstructDailyData(insideDailyData);
-            var daysOutside = ConstructDailyData(outsideDailyData);
-
-            Console.WriteLine($"Number of datapoints inside: {inside.Count}");
-            Console.WriteLine($"Number of datapoints outside: {outside.Count}");
-
-            Console.WriteLine($"Inside Maxii : {inside.Select(x => x.Temperature).Max()}    {inside.Select(x => x.Moisture).Max()}");
-            Console.WriteLine($"Outside Maxii : {outside.Select(x => x.Temperature).Max()}    {outside.Select(x => x.Moisture).Max()}");
-
-            Console.WriteLine($"Inside Minimii : {inside.Select(x => x.Temperature).Min()}    {inside.Select(x => x.Moisture).Min()}");
-            Console.WriteLine($"Outside Minimii: {outside.Select(x => x.Temperature).Min()}    {outside.Select(x => x.Moisture).Min()}");
-
-            Console.WriteLine($"Inside avg: {inside.Select(x => x.Temperature).Average()}");
-            Console.WriteLine($"Outside avg: {outside.Select(x => x.Temperature).Average()}");
-
-            List<DailyData> winterDays = daysOutside.Where(x => x.AverageTemperature < 0).ToList();
-            List<DailyData> autumnDays = daysOutside.Where(x => x.AverageTemperature < 10 && x.Date >= new DateOnly(2016, 08, 01)).ToList();
-
-            var autumnDate = GetSwedishMeteorologicalAutumn(autumnDays);
-            var winterDate = FiveDaysInARow(winterDays);
-
-            IEnumerable<List<DailyData>> InsideGroupedByMonth = daysInside.GroupBy(x => x.Date.Month).Select(x => x.ToList());
-            IEnumerable<List<DailyData>> OutsideGroupedByMonth = daysOutside.GroupBy(x => x.Date.Month).Select(x => x.ToList());
-
-            var monthsInside = (from m in InsideGroupedByMonth let mdays = m.ToList() select new MonthlyData(mdays)).ToList().GroupBy(x => x.Year);
-            var monthsOutside = (from m in OutsideGroupedByMonth let mdays = m.ToList() select new MonthlyData(mdays)).ToList().GroupBy(x => x.Year);
-
-            var yearsInside = (from m in monthsInside let monthsInsideAtYear = m.ToList() select new AnnualData(monthsInsideAtYear, autumnDate, winterDate));
-            var yearsOutside = (from m in monthsOutside let monthsOutsideAtYear = m.ToList() select new AnnualData(monthsOutsideAtYear, autumnDate, winterDate));
-
-
-
-
-
-            //var groupedMatches = regex.Matches(rows)
-            //                    .GroupBy(x => new { location = x.Groups["location"] });
-            //                    //.Select(x => new { x.Key.location, vals = x.ToList() });
-
-            //foreach (var location in groupedMatches) {
-            //    Console.WriteLine("Should only print twice");
-            //    var monthlyMatches = location
-            //        .GroupBy(x => x.Groups["date"].Value[5..7]);
-            //        //.Select(x => new { month = x.Key, vals = x.ToList() });
-
-            //    foreach (var monthly in monthlyMatches) {
-            //        var dailyMatches = monthly
-            //                           .GroupBy(x => x.Groups["date"]);
-            //                           //.Select(x => new { day = x.Key, vals = x.ToList() });
-            //        foreach (var day in dailyMatches) {
-            //            IEnumerable<double> temps = day.Select(x => double.Parse(x.Groups["temp"].Value, CultureInfo.InvariantCulture)).ToList();
-            //        }
-            //    }
-            //}
-
-
-
-            //if (ValidateDate(grouped.date.Value)) {
-            //    Console.WriteLine($"{grouped.date} {grouped.location} {grouped.vals.Count}");
-            //    foreach (Group group in match.Groups) {
-            //        Console.WriteLine(group.Name + " " + group.Value);
-            //    }
-
-            //    Console.WriteLine(match.Name);
-            //}
+            List<DataPoint> dataSet = ConstructDataSet(rows);
+            (var insideYears, var outsideYears) = GenerateAggregatedData(dataSet);
         }
 
         private static DateOnly GetSwedishMeteorologicalAutumn(List<DailyData> autumnDays)
         {
+            // TODO: Remove magic numbers
             return FiveDaysInARow(autumnDays) ?? new DateOnly(2017, 02, 14);
-            
         }
 
         private static DateOnly? FiveDaysInARow(List<DailyData> days)
@@ -167,28 +62,21 @@ namespace MoldAndBold.Models {
             {
                 var avarageTemperature = day.Select(x => x.Temperature).Average();
                 var avarageMoisture = day.Select(x => x.Moisture).Average();
-                dailyDatas.Add(new DailyData() {
+                dailyDatas.Add(new DailyData()
+                {
                     Date = DateOnly.FromDateTime(day.Key),
                     AverageTemperature = avarageTemperature,
                     AverageMoisture = avarageMoisture,
                     AverageMoldRisk = GetMoldRisk(avarageTemperature, avarageMoisture),
                     Location = day.ToList()[0].Location
-                }) ;
-
+                });
             }
-            //dailyDatas.Add(new DailyData()
-            //{
-            //    Date = DateOnly.FromDateTime(DateTime.Now),
-            //    AverageTemperature = 40,
-            //    AverageMoisture = 85,
-            //    AverageMoldRisk = GetMoldRisk(40, 85)
-            //});
             return dailyDatas;
         }
 
         private static List<DataPoint> PurgeTemperatureDataPoints(List<DataPoint> list)
         {
-            // TODO: If time, repare faulted data
+            // TODO: If time, repare faulted data and remove magic numbers
             if (list[0].Location == Location.Inne)
                 return list.Where(x => x.Temperature < 40 && x.Temperature > 16).ToList();
             else
@@ -229,7 +117,7 @@ namespace MoldAndBold.Models {
             return String.Empty;
         }
 
-        private static List<DataPoint> ConstructDataset(string rows)
+        private static List<DataPoint> ConstructDataSet(string rows)
         {
             Regex regex = new("(?<date>\\d{4}-\\d{2}-\\d{2}) (?<time>\\d{2}:\\d{2}:\\d{2}),(?<location>Inne|Ute),(?<temp>-?\\d{1,2}.\\d{1,2}),(?<moisture>\\d{1,2})");
             List<DataPoint> dataset = new();
@@ -243,10 +131,8 @@ namespace MoldAndBold.Models {
                     Temperature = double.Parse(match.Groups["temp"].Value, CultureInfo.InvariantCulture)
                 });
             }
-
             return dataset;
         }
-
 
         private static double GetMoldRisk(double temperature, double moisture)
         {
@@ -259,47 +145,73 @@ namespace MoldAndBold.Models {
                 return Math.Max(100 - 1.5 * (100 - moisture) - ((temperature > 30 ? 1.5 : 1) * (Math.Abs(30 - temperature))) - (Math.Abs(30 - temperature)) * (moisture) / 100, 0);
             }
         }
-        //private static double GetAverage<T>(IEnumerable<T> values) where T : IEnumerable<T> {
-        //    return values.Sum(x => x) / values.Count;
-        //}
-        private static double GetAverageMoisture(List<int> moistures)
-        {
-            return (double)moistures.Sum(x => x) / moistures.Count;
-        }
 
-        private static double GetAverageTemperature(List<double> temperatures)
-        {
-            return temperatures.Sum(x => x) / temperatures.Count;
-        }
-
-        private static bool IsMonthlyDatacomplete(int month, int daysWithData)
-        {
-            double threshold = 0.5D;
-            int TotalDaysInMonth = DateTime.DaysInMonth(2016, month);
-            return (double)daysWithData / TotalDaysInMonth >= threshold;
-        }
         private static bool ValidateDate(string date)
         {
             return DateTime.TryParse(date, out _);
-
         }
+
         private static bool ValidateTime(string time)
         {
             return TimeOnly.TryParse(time, out _);
         }
-        private static bool ValidateTemperature(Match match)
+
+        internal static (IEnumerable<AnnualData>, IEnumerable<AnnualData>) GenerateAggregatedData(List<DataPoint> dataSet)
         {
-            return true;
-        }
-        private static bool ValidateMoisture(Match match)
-        {
-            return true;
+            dataSet = PurgeDateDataPoints(dataSet, new DateTime(2015, 06, 01), new DateTime(2018, 01, 01));
+
+            (var daysInside, var daysOutside) = GenerateDays(dataSet);
+
+            var monthsInside = GenerateMonths(daysInside);
+            var monthsOutside = GenerateMonths(daysOutside);
+
+            //
+            return GenerateYears(monthsInside, monthsOutside);
         }
 
-        internal void GenerateAggregatedData()
+        private static (IEnumerable<AnnualData> inside, IEnumerable<AnnualData> outside) GenerateYears(IEnumerable<IGrouping<int, MonthlyData>> monthsInside, IEnumerable<IGrouping<int, MonthlyData>> monthsOutside)
         {
-            ConstructData();
+            foreach (var item in collection)
+            {
+
+            }
+            List<DailyData> winterDays = monthsOutside.GroupBy(x => x.ToList()).Where(x => x.AverageTemperature < 0).ToList();
+            List<DailyData> autumnDays = daysOutside.Where(x => x.AverageTemperature < 10 && x.Date >= new DateOnly(2016, 08, 01)).ToList();
+
+            var autumnDate = GetSwedishMeteorologicalAutumn(autumnDays);
+            var winterDate = FiveDaysInARow(winterDays);
+
+            var yearsInside = (from m in monthsInside let monthsInsideAtYear = m.ToList() select new AnnualData(monthsInsideAtYear, autumnDate, winterDate));
+            var yearsOutside = (from m in monthsOutside let monthsOutsideAtYear = m.ToList() select new AnnualData(monthsOutsideAtYear, autumnDate, winterDate));
+            return (yearsInside, yearsOutside);
         }
+
+        private static IEnumerable<IGrouping<int, MonthlyData>> GenerateMonths(IEnumerable<DailyData> days)
+        {
+            IEnumerable<List<DailyData>> groupedByMonth = days.GroupBy(x => x.Date.Month).Select(x => x.ToList());
+            return (from m in groupedByMonth let mdays = m.ToList() select new MonthlyData(mdays)).ToList().GroupBy(x => x.Year);
+            //IEnumerable<List<DailyData>> InsideGroupedByMonth = daysInside.GroupBy(x => x.Date.Month).Select(x => x.ToList());
+            //IEnumerable<List<DailyData>> OutsideGroupedByMonth = daysOutside.GroupBy(x => x.Date.Month).Select(x => x.ToList());
+
+            //var monthsInside = (from m in InsideGroupedByMonth let mdays = m.ToList() select new MonthlyData(mdays)).ToList().GroupBy(x => x.Year);
+            //var monthsOutside = (from m in OutsideGroupedByMonth let mdays = m.ToList() select new MonthlyData(mdays)).ToList().GroupBy(x => x.Year);
+        }
+
+        private static (IEnumerable<DailyData> inside, IEnumerable<DailyData> outside) GenerateDays(List<DataPoint> dataSet)
+        {
+            // TODO: Purge Datapoints from invalid moisture data (framtidssäkra)
+
+            (List<DataPoint> inside, List<DataPoint> outside) = dataSet.Split(x => x.Location == Location.Inne);
+            var insideDailyData = PurgeTemperatureDataPoints(inside).GroupBy(x => x.Date.Date);
+            var outsideDailyData = PurgeTemperatureDataPoints(outside).GroupBy(x => x.Date.Date);
+
+            var daysInside = ConstructDailyData(insideDailyData);
+            var daysOutside = ConstructDailyData(outsideDailyData);
+            return (daysInside, daysOutside);
+        }
+
+
+
         internal void SaveAggregatedData()
         {
 
