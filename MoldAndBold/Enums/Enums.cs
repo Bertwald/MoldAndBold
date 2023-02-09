@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MoldAndBold.Enums {
+﻿namespace MoldAndBold.Enums {
     internal enum Month {
         NoMonth = 0,
         January,
@@ -19,6 +13,11 @@ namespace MoldAndBold.Enums {
         October,
         November,
         December
+    }
+    internal enum Location {
+        None,
+        Inne,
+        Ute
     }
 
 }

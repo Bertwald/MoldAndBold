@@ -1,4 +1,6 @@
 ﻿
+using MoldAndBold.Enums;
+
 namespace MoldAndBold.Models {
     internal class AnnualData {
         internal int Year { get; set; }

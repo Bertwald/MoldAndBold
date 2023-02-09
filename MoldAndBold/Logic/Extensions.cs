@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 
 namespace MoldAndBold.Logic {
     internal static class StringExtensions {
+
+    }
+    internal static class DelegateExtensions {
+        public static string AsString(this Delegate action) {
+            return action.GetMethodInfo().Name;
+        }
 
     }
 

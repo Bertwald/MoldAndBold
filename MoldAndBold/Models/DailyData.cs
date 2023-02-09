@@ -1,4 +1,6 @@
 ﻿
+using MoldAndBold.Enums;
+
 namespace MoldAndBold.Models {
     internal class DailyData {
         internal DateOnly Date { get; set; }

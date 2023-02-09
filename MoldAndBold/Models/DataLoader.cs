@@ -1,11 +1,10 @@
-﻿using MoldAndBold.Logic;
+﻿using MoldAndBold.Enums;
+using MoldAndBold.Logic;
 using System.Data;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace MoldAndBold.Models
-{
+namespace MoldAndBold.Models {
     internal class DataLoader
     {
 

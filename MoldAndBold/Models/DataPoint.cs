@@ -1,10 +1,7 @@
 ﻿
+using MoldAndBold.Enums;
+
 namespace MoldAndBold.Models {
-    internal enum Location {
-        None,
-        Inne,
-        Ute
-    }
     internal class DataPoint {
         internal DateTime Date { get; set; }
         internal double Temperature { get; set; }
