@@ -1,14 +1,14 @@
-﻿
-using MoldAndBold.Enums;
+﻿using MoldAndBold.Enums;
+using MoldAndBold.Logic;
 
 namespace MoldAndBold.Models {
-    internal class DailyData {
-        internal DateOnly Date { get; set; }
+    public class DailyData {
+        public DateOnly Date { get; set; }
         // internal double HighTemperature { get; set; }
         // internal double LowTemperature { get; set; }
-        internal double AverageTemperature { get; set; }
-        internal double AverageMoldRisk { get; set; }
-        internal double AverageMoisture { get; set; }
-        internal Location Location { get; set; }
+        public double AverageTemperature { get; set; }
+        public double AverageMoldRisk { get; set; }
+        public double AverageMoisture { get; set; }
+        public Location Location { get; set; }
     }
 }

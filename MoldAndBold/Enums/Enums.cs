@@ -1,5 +1,5 @@
 ﻿namespace MoldAndBold.Enums {
-    internal enum Month {
+    public enum Month {
         NoMonth = 0,
         January,
         February,
@@ -14,7 +14,7 @@
         November,
         December
     }
-    internal enum Location {
+    public enum Location {
         None,
         Inne,
         Ute

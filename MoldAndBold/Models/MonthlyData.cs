@@ -1,16 +1,16 @@
 ﻿using MoldAndBold.Enums;
 
 namespace MoldAndBold.Models {
-    internal class MonthlyData {
-        internal int Year { get; set; }
-        internal Month Month { get; set; }
-        internal double AverageTemperature { get; set; }
-        internal double AverageMoisture { get; set; }
-        internal double AverageMoldRisk { get; set; }
-        internal List<DailyData> Days { get; set; } = new();
-        internal Location Location { get; set; }
-        internal bool CompleteData { get; }
-        internal MonthlyData(List<DailyData> mdays) {
+    public class MonthlyData {
+        public int Year { get; set; }
+        public Month Month { get; set; }
+        public double AverageTemperature { get; set; }
+        public double AverageMoisture { get; set; }
+        public double AverageMoldRisk { get; set; }
+        public List<DailyData> Days { get; set; } = new();
+        public Location Location { get; set; }
+        public bool CompleteData { get; }
+        public MonthlyData(List<DailyData> mdays) {
             Year = mdays[0].Date.Year;
             Month = (Month)mdays[0].Date.Month;
             Days = mdays;
