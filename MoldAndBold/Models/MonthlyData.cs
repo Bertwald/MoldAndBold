@@ -1,4 +1,5 @@
 ﻿using MoldAndBold.Enums;
+using System.Text.Json.Serialization;
 
 namespace MoldAndBold.Models {
     public class MonthlyData {
@@ -10,6 +11,8 @@ namespace MoldAndBold.Models {
         public List<DailyData> Days { get; set; } = new();
         public Location Location { get; set; }
         public bool CompleteData { get; }
+        [JsonConstructor]
+        public MonthlyData() { }
         public MonthlyData(List<DailyData> mdays) {
             Year = mdays[0].Date.Year;
             Month = (Month)mdays[0].Date.Month;

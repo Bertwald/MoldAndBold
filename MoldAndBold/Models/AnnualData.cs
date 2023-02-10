@@ -1,5 +1,6 @@
 ﻿
 using MoldAndBold.Enums;
+using System.Text.Json.Serialization;
 
 namespace MoldAndBold.Models {
     internal class AnnualData {
@@ -11,7 +12,8 @@ namespace MoldAndBold.Models {
         public double AverageMoldRisk { get; set; }
         public List<MonthlyData> Months { get; set; } = new();
         public Location Location { get; set; }
-
+        [JsonConstructor]
+        public AnnualData() { }
         public AnnualData(List<MonthlyData> months, DateOnly? autumnArrival, DateOnly? winterArrival ) {
             Months = months;
             Location = months[0].Location;
