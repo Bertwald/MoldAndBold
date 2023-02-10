@@ -9,9 +9,6 @@ namespace MoldAndBold
         static void Main(string[] args) {
             Console.CursorVisible = false;
             while (true) {
-                if(Console.ReadKey() == null) {
-                    return;
-                }
                 //
                 ActionSelector.ExecuteActionFromList(new List<Action> { ShowInsideData, ShowOutsideData, ConstructData });
             }

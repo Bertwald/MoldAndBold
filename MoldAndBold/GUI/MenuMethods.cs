@@ -20,7 +20,7 @@ namespace MoldAndBold.GUI
         }
         internal static void ShowDaysOrderedByTemp()
         {
-            //ShowOrderedBy<AnnualData>();
+            ShowOrderedBy(x => x.AverageTemperature);
         }
 
         internal static void ShowDaysOrderedByHumidity() 
@@ -31,9 +31,9 @@ namespace MoldAndBold.GUI
         { }
         internal static void SearchByDate()
         { }
-        internal static void ShowOrderedBy<T>(Func<T> ordning){
+        internal static void ShowOrderedBy(Func<AnnualData, double> ordning){
             // list<DailyData> data = loadAll();
-            //DataLoader.LoadAllDays(Enums.Location.Inside).OrderBy();
+            var ordered = DataLoader.LoadAllDays(Enums.Location.Inside).OrderBy(ordning);
             // Print
         }
     }

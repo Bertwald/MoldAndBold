@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using MoldAndBold.Models;
+using System.Reflection;
 
 namespace MoldAndBold.Logic {
     internal static class StringExtensions {
@@ -36,6 +37,12 @@ namespace MoldAndBold.Logic {
         //    }
         //    return result / T.Parse(values.Count().ToString(), null);
         //}
+    }
+
+    internal static class AnnualDataExtensions {
+        public static List<DailyData> ExtractDays(this List<AnnualData> years) {
+            return years.SelectMany(x => x.Months).SelectMany(x => x.Days).ToList();
+        }
     }
 
 }
