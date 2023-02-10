@@ -166,9 +166,13 @@ namespace MoldAndBold.Models {
                 WriteIndented = true,
                 Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)}
             };
-            string jsonString = JsonSerializer.Serialize(insideMonthsGroupedByYear.ToList(), options);
-
+            string jsonString = JsonSerializer.Serialize(insideMonthsGroupedByYear.ToList().SelectMany(x => x.SelectMany(x => x)).Select(x => x), options);
+         
             Console.WriteLine(jsonString);
+            var monthlyDatas = JsonSerializer.Deserialize<List<MonthlyData>>(jsonString, options)!;
+
+
+            Console.WriteLine(insideMonthsGroupedByYear.ToList().SelectMany(x => x.SelectMany(x => x)).Select(x => x).GetType());
 
             //foreach(var y in insideMonthsGroupedByYear) {
             //    var monthsInYear = y.ToList();
