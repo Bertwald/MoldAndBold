@@ -8,7 +8,13 @@ namespace MoldAndBold
     internal class Program {
         static void Main(string[] args) {
             Console.CursorVisible = false;
-            ActionSelector.ExecuteActionFromList(new List<Action> { ShowInsideData, ShowOutsideData, ConstructData });
+            while (true) {
+                if(Console.ReadKey() == null) {
+                    return;
+                }
+                //
+                ActionSelector.ExecuteActionFromList(new List<Action> { ShowInsideData, ShowOutsideData, ConstructData });
+            }
             //var data = DataLoader.LoadAllDays(Location.Inside);
             //DataLoader.ConstructData();
         }

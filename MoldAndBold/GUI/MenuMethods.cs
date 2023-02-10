@@ -1,4 +1,5 @@
 ﻿using MoldAndBold.Logic;
+using MoldAndBold.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,10 @@ namespace MoldAndBold.GUI
             ActionSelector.ExecuteActionFromList(new List<Action> { SearchByDate, ShowDaysOrderedByTemp, ShowDaysOrderedByHumidity, ShowDaysOrderedByMoldRisk, ShowSpecialDates });
         }
         internal static void ShowDaysOrderedByTemp()
-        { }
+        {
+            //ShowOrderedBy<AnnualData>();
+        }
+
         internal static void ShowDaysOrderedByHumidity() 
         { }
         internal static void ShowDaysOrderedByMoldRisk()
@@ -27,5 +31,10 @@ namespace MoldAndBold.GUI
         { }
         internal static void SearchByDate()
         { }
+        internal static void ShowOrderedBy<T>(Func<T> ordning){
+            // list<DailyData> data = loadAll();
+            //DataLoader.LoadAllDays(Enums.Location.Inside).OrderBy();
+            // Print
+        }
     }
 }
