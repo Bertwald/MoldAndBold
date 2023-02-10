@@ -1,6 +1,6 @@
 ﻿using static MoldAndBold.Logic.DataLoader;
 using MoldAndBold.Enums;
-using static MoldAndBold.GUI.ConsoleUI;
+using static MoldAndBold.GUI.MenuMethods;
 using MoldAndBold.Logic;
 
 namespace MoldAndBold
@@ -8,8 +8,7 @@ namespace MoldAndBold
     internal class Program {
         static void Main(string[] args) {
             Console.CursorVisible = false;
-            ActionSelector.GetItemFromList(new List<Action> { ShowInsideData, ShowOutsideData, ConstructData });
-            ActionSelector.GetItemFromList(new List<Action> { SearchByDate, ShowDaysOrderedByTemp, ShowDaysOrderedByHumidity, ShowDaysOrderedByMoldRisk });
+            ActionSelector.ExecuteActionFromList(new List<Action> { ShowInsideData, ShowOutsideData, ConstructData });
             //var data = DataLoader.LoadAllDays(Location.Inside);
             //DataLoader.ConstructData();
         }

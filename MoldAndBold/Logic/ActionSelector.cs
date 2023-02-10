@@ -4,15 +4,15 @@ using MoldAndBold.GUI;
 namespace MoldAndBold.Logic
 {
     internal class ActionSelector {
-        internal static T? GetItemFromList<T>(List<T> items) where T : Delegate {
+        internal static void ExecuteActionFromList<T>(List<T> items) where T : Delegate {
             if (!items.Any()) {
-                return null;
+                return;
             }
             Menu indexMenu = new(typeof(T).Name,
                            items.Select(x => x.AsString()).ToList()!,
                            0);
             int index = indexMenu.RunMenu();
-            return items[index];
+            items[index].DynamicInvoke();
         }
     }
 }
