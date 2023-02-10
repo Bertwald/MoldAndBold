@@ -1,5 +1,8 @@
 ﻿
-namespace MoldAndBold.Logic {
+using MoldAndBold.GUI;
+
+namespace MoldAndBold.Logic
+{
     internal class ActionSelector {
         internal static T? GetItemFromList<T>(List<T> items) where T : Delegate {
             if (!items.Any()) {

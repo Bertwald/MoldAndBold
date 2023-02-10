@@ -16,8 +16,8 @@
     }
     public enum Location {
         None,
-        Inne,
-        Ute
+        Inside,
+        Outside
     }
 
 }
