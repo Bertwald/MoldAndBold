@@ -28,39 +28,57 @@ namespace MoldAndBold.Models {
             List<DataPoint> dataSet = ConstructDataSet(rows);
             (var insideYears, var outsideYears) = GenerateAggregatedData(dataSet);
 
-            GenerateJson(insideYears);
+            string insideJson = GenerateJson(insideYears);
+            string outsideJson = GenerateJson(outsideYears);
 
             GenerateReportFile(insideYears, outsideYears);
-            GenerateJsonFiles(insideYears, outsideYears);
+            GenerateJsonFiles(insideJson, outsideJson);
         }
 
-        private static void GenerateJsonFiles(IEnumerable<AnnualData> insideYears, IEnumerable<AnnualData> outsideYears) {
+        private static void GenerateJsonFiles(string inside, string outside) {
             throw new NotImplementedException();
         }
 
         private static void GenerateReportFile(IEnumerable<AnnualData> insideYears, IEnumerable<AnnualData> outsideYears) {
-            string path = ;
-            string filename = "report.txt";
+            string path = "..\\..\\..\\LocalOnly\\report.txt";
 
             string content = "ReportFile" + Environment.NewLine;
             content += "Outdoors Statistics" + Environment.NewLine;
             foreach (AnnualData data in outsideYears) {
-                content += "First autumn day: " + data.AutumnArrival + Environment.NewLine;
-                content += "First winter day: " + data.WinterArrival + Environment.NewLine;
-                foreach(MonthlyData month in data.Months) {
-                    content += month.Month.ToString();
-                    content += "Average temperature: " + month.AverageTemperature + Environment.NewLine;
-                    content += "Average Moisture: " + month.AverageMoisture + Environment.NewLine;
-                    content += "Mold Risk: " + month.AverageMoldRisk + Environment.NewLine;
+                content += "\t" + data.Year + Environment.NewLine;
+                content += "\t" + "Special days of the year:" + Environment.NewLine;
+                content += "\tFirst autumn day: " + data.AutumnArrival + Environment.NewLine;
+                content += "\tFirst winter day: " + (data.WinterArrival == null ? "Didnt happen" : data.WinterArrival + Environment.NewLine) + Environment.NewLine;
+                content += "\tMonthly statistics: " + Environment.NewLine;
+                foreach (MonthlyData month in data.Months) {
+                    content += "\t\t" + month.Month.ToString() + Environment.NewLine;
+                    content += "\t\tAverage Temperature: " + month.AverageTemperature + Environment.NewLine;
+                    content += "\t\tAverage Moisture: " + month.AverageMoisture + Environment.NewLine;
+                    content += "\t\tMold Risk: " + month.AverageMoldRisk + Environment.NewLine;
                 }
             }
+            content += "\tIndoors Statistics" + Environment.NewLine;
             foreach (AnnualData data in insideYears) {
-                content += "Indoors Statistics" + Environment.NewLine;
+                content += "\t" + data.Year + Environment.NewLine;
+                content += "\tMonthly statistics: " + Environment.NewLine;
                 foreach (MonthlyData month in data.Months) {
-                    content += "" + month.AverageTemperature + Environment.NewLine;
-                    content += "" + month.AverageMoisture + Environment.NewLine;
-                    content += "" + month.AverageMoldRisk + Environment.NewLine;
+                    content += "\t\t" + month.Month.ToString() + Environment.NewLine;
+                    content += "\t\tAverage Temperature " + month.AverageTemperature + Environment.NewLine;
+                    content += "\t\tAverage Moisture " + month.AverageMoisture + Environment.NewLine;
+                    content += "\t\tMold Risk: " + month.AverageMoldRisk + Environment.NewLine;
                 }
+            }
+            content += Environment.NewLine;
+            content += new string('-', 60) + Environment.NewLine + Environment.NewLine;
+            content += "Algorithm for determining risk of mold" + Environment.NewLine;
+            content += "if (temperature < 0 || temperature > 50 || moisture < 60) {\r\n                return 0;\r\n            } else {\r\n                return Math.Max(100 - 1.5 * (100 - moisture) - ((temperature > 30 ? 1.5 : 1) * (Math.Abs(30 - temperature))) - (Math.Abs(30 - temperature)) * (moisture) / 100, 0);\r\n            }";
+            try {
+                using (var writer = new StreamWriter(path)) {
+                    writer.WriteLine(content);
+                }
+            }
+            catch (Exception e) {
+                Console.WriteLine("Could not create the report file");
             }
         }
 
@@ -73,9 +91,9 @@ namespace MoldAndBold.Models {
             //return JsonSerializer.Deserialize<List<AnnualData>>(jsonString, options)!;
         }
 
-        private static DateOnly GetSwedishMeteorologicalAutumn(List<DailyData> autumnDays) {
+        private static DateOnly GetSwedishMeteorologicalAutumn(List<DailyData> autumnDays, int year) {
             // TODO: Remove magic numbers
-            return FiveDaysInARow(autumnDays) ?? new DateOnly(2017, 02, 14);
+            return FiveDaysInARow(autumnDays) ?? new DateOnly(year + 1, 02, 14);
         }
 
         private static DateOnly? FiveDaysInARow(List<DailyData> days) {
@@ -203,7 +221,7 @@ namespace MoldAndBold.Models {
                 // Outside Data
                 var unionedWinterDays = GetUnionedList(outsideMonthsGroupedByYear, year, 0, new DateOnly(year + 1, 2, 15));
                 var unionedAutumnDays = GetUnionedList(outsideMonthsGroupedByYear, year, 10, new DateOnly(year + 1, 2, 15));
-                var autumnDate = GetSwedishMeteorologicalAutumn(unionedAutumnDays.Where(x => x.Date > new DateOnly(year, 9, 1)).ToList());
+                var autumnDate = GetSwedishMeteorologicalAutumn(unionedAutumnDays.Where(x => x.Date > new DateOnly(year, 9, 1)).ToList(), year);
                 var winterDate = FiveDaysInARow(unionedWinterDays);
                 // TODO: här slutade vi
                 //var test = outsideMonthsGroupedByYear.Where(x => x.Key.Contains(year)).Select(x => x).Select(x => x).ToList();
