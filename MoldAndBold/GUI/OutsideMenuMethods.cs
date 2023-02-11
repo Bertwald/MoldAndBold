@@ -1,4 +1,5 @@
-﻿using MoldAndBold.Logic;
+﻿using MoldAndBold.Enums;
+using MoldAndBold.Logic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,40 @@ namespace MoldAndBold.GUI
     {
         internal static void ShowOutsideData()
         {
-            ActionSelector.ExecuteActionFromList(new List<Action> { MenuMethods.SearchByDate, ShowOutsideDaysOrderedByTemp, ShowOutsideDaysOrderedByHumidity, ShowOutsideDaysOrderedByMoldRisk, ShowSpecialDates, MenuMethods.ExitProgram });
+            ActionSelector.ExecuteActionFromList(new List<Action> { SearchByDateOutside, ShowOutsideDaysOrderedByTemp, ShowOutsideDaysOrderedByHumidity, ShowOutsideDaysOrderedByMoldRisk, ShowSpecialDates, MenuMethods.ExitProgram });
+        }
+
+        internal static void SearchByDateOutside()
+        {
+            Console.WriteLine("Enter date you would like to search for, format yyyy-MM-dd");
+            var input = Console.ReadLine();
+            while (!DataLoader.ValidateDate(input))
+            {
+                Console.WriteLine("Wrong input, try again or enter \"exit\" to exit");
+                input = Console.ReadLine();
+                if (input.ToLower() is "exit")
+                    break;
+            }
+            var date = DateOnly.Parse(input);
+            var day = DataLoader.LoadAllDays(Location.Outside)
+                .SelectMany(x => x.Months.SelectMany(x => x.Days))
+                .Where(x => x.Date == date)
+                .FirstOrDefault();
+            if (day is not null)
+            {
+                var lineBreak = Environment.NewLine;
+                Console.WriteLine($"Inside/Outside: {day.Location + lineBreak}" +
+                    $"Avarage temperature: {Math.Round(day.AverageTemperature) + lineBreak}" +
+                    $"Avarage humidity (%): {Math.Round(day.AverageMoisture) + lineBreak}" +
+                    $"Avarage mold risk: {Math.Round(day.AverageMoldRisk) + lineBreak + lineBreak}" +
+                    $"Press any key to continue");
+                Console.ReadKey(true);
+            }
+            else
+            {
+                Console.WriteLine($"A day with date {date} could not be found. Press any key to continue");
+                Console.ReadKey(true);
+            }
         }
 
         internal static void ShowOutsideDaysOrderedByTemp()
