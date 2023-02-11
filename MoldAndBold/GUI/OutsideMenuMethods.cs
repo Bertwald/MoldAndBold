@@ -23,7 +23,7 @@ namespace MoldAndBold.GUI
             var content = "Top 10 days ordered by temperatures, coldest to hottest" + lineBreak;
             for (int i = 0; i < 10; i++)
             {
-                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - AvgTemp: {orderedData[i].AverageTemperature + lineBreak}";
+                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - AvgTemp: {Math.Round(orderedData[i].AverageTemperature) + lineBreak}";
             }
             Console.WriteLine(content + lineBreak + "Press any key to continue");
             Console.ReadKey(true);
@@ -37,7 +37,7 @@ namespace MoldAndBold.GUI
             var content = "Top 10 days ordered by humidity, lowest to highest" + lineBreak;
             for (int i = 0; i < 10; i++)
             {
-                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - AvgHumidity: {orderedData[i].AverageMoisture + lineBreak}";
+                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - AvgHumidity: {Math.Round(orderedData[i].AverageMoisture) + lineBreak}";
             }
             Console.WriteLine(content + lineBreak + "Press any key to continue");
             Console.ReadKey(true);
@@ -45,7 +45,16 @@ namespace MoldAndBold.GUI
 
         internal static void ShowOutsideDaysOrderedByMoldRisk()
         {
-        
+            var lineBreak = Environment.NewLine;
+            var allData = DataLoader.LoadAllDays(Enums.Location.Outside);
+            var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageMoldRisk).ToList();
+            var content = "Top 5 days ordered by mold risk, lowest to highest" + lineBreak;
+            for (int i = 0; i < 5; i++)
+            {
+                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - Risk: {Math.Round(orderedData[i].AverageMoisture)}% {lineBreak}";
+            }
+            Console.WriteLine(content + lineBreak + "Press any key to continue");
+            Console.ReadKey(true);
         }
 
         internal static void ShowSpecialDates()
