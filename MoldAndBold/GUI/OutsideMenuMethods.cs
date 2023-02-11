@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Environment;
 
 namespace MoldAndBold.GUI
 {
@@ -17,11 +18,11 @@ namespace MoldAndBold.GUI
 
         internal static void SearchByDateOutside()
         {
-            var date = MenuMethods.GetDateFromUser();
-            var day = MenuMethods.GetDayFromDate(date);
+            var date = Helper.GetDateFromUser();
+            var day = DataLoader.GetDailyDataFromDate(date);
             if (day is not null)
             {
-                MenuMethods.ShowDailyDataFromDay(day);
+                Helper.PrintDailyDataFromDay(day);
             }
             else
             {
@@ -32,56 +33,52 @@ namespace MoldAndBold.GUI
 
         internal static void ShowOutsideDaysOrderedByTemp()
         {
-            //ShowOrderedBy(x => x.AverageTemperature);
-            var lineBreak = Environment.NewLine;
-            var allData = DataLoader.LoadAllDays(Enums.Location.Outside);
+            var allData = DataLoader.LoadAllDays(Location.Outside);
             var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageTemperature).ToList();
-            var content = "Top 10 days ordered by temperatures, coldest to hottest" + lineBreak;
+            var content = "Top 10 days ordered by temperatures, coldest to hottest" + NewLine;
             for (int i = 0; i < 10; i++)
             {
-                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - AvgTemp: {Math.Round(orderedData[i].AverageTemperature) + lineBreak}";
+                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - AvgTemp: {Math.Round(orderedData[i].AverageTemperature) + NewLine}";
             }
-            Console.WriteLine(content + lineBreak + "Press any key to continue");
+            Console.WriteLine(content + NewLine + "Press any key to continue");
             Console.ReadKey(true);
         }
 
         internal static void ShowOutsideDaysOrderedByHumidity()
         {
-            var lineBreak = Environment.NewLine;
-            var allData = DataLoader.LoadAllDays(Enums.Location.Outside);
+            var allData = DataLoader.LoadAllDays(Location.Outside);
             var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageMoisture).ToList();
-            var content = "Top 10 days ordered by humidity, lowest to highest" + lineBreak;
+            var content = "Top 10 days ordered by humidity, lowest to highest" + NewLine;
             for (int i = 0; i < 10; i++)
             {
-                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - AvgHumidity: {Math.Round(orderedData[i].AverageMoisture) + lineBreak}";
+                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - AvgHumidity: {Math.Round(orderedData[i].AverageMoisture) + NewLine}";
             }
-            Console.WriteLine(content + lineBreak + "Press any key to continue");
+            Console.WriteLine(content + NewLine + "Press any key to continue");
             Console.ReadKey(true);
         }
 
         internal static void ShowOutsideDaysOrderedByMoldRisk()
         {
-            var lineBreak = Environment.NewLine;
-            var allData = DataLoader.LoadAllDays(Enums.Location.Outside);
+            var allData = DataLoader.LoadAllDays(Location.Outside);
             var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageMoldRisk).ToList();
-            var content = "Top 5 days ordered by mold risk, lowest to highest" + lineBreak;
+            var content = "Top 5 days ordered by mold risk, lowest to highest" + NewLine;
             for (int i = 0; i < 5; i++)
             {
-                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - Risk: {Math.Round(orderedData[i].AverageMoisture)}% {lineBreak}";
+                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - Risk: {Math.Round(orderedData[i].AverageMoisture)}% {NewLine}";
             }
-            Console.WriteLine(content + lineBreak + "Press any key to continue");
+            Console.WriteLine(content + NewLine + "Press any key to continue");
             Console.ReadKey(true);
         }
 
         internal static void ShowSpecialDates()
         {
-            var specialDates = DataLoader.LoadAllDays(Enums.Location.Outside).Select(x => x);
-            string dateInfo = "Special days of the year:" + Environment.NewLine + Environment.NewLine;
+            var specialDates = DataLoader.LoadAllDays(Location.Outside).Select(x => x);
+            string dateInfo = "Special days of the year:" + NewLine + NewLine;
             foreach (var date in specialDates)
             {
-                dateInfo += date.Year + Environment.NewLine;
-                dateInfo += "First autumn day: " + date.AutumnArrival + Environment.NewLine;
-                dateInfo += "First winter day: " + (date.WinterArrival == null ? "Didnt happen" : date.WinterArrival + Environment.NewLine) + Environment.NewLine + Environment.NewLine;
+                dateInfo += date.Year + NewLine;
+                dateInfo += "First autumn day: " + date.AutumnArrival + NewLine;
+                dateInfo += "First winter day: " + (date.WinterArrival == null ? "Didnt happen" : date.WinterArrival + NewLine) + NewLine + NewLine;
             }
             Console.WriteLine(dateInfo);
             Console.ReadKey();

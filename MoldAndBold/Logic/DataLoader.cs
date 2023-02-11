@@ -10,6 +10,10 @@ namespace MoldAndBold.Logic
 {
     internal class DataLoader
     {
+        internal static DailyData? GetDailyDataFromDate(DateOnly date)
+        {
+            return LoadAllDays(Location.Inside).SelectMany(x => x.Months.SelectMany(x => x.Days)).Where(x => x.Date == date).FirstOrDefault();
+        }
 
         internal static List<DataPoint> GetDailyData()
         {
