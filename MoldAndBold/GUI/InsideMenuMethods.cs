@@ -18,29 +18,11 @@ namespace MoldAndBold.GUI
 
         internal static void SearchByDateInside()
         {
-            Console.WriteLine("Enter date you would like to search for, format yyyy-MM-dd");
-            var input = Console.ReadLine();
-            while (!DataLoader.ValidateDate(input))
-            {
-                Console.WriteLine("Wrong input, try again or enter \"exit\" to exit");
-                input = Console.ReadLine();
-                if (input.ToLower() is "exit")
-                    break;
-            }
-            var date = DateOnly.Parse(input);
-            var day = DataLoader.LoadAllDays(Location.Inside)
-                .SelectMany(x => x.Months.SelectMany(x => x.Days))
-                .Where(x => x.Date == date)
-                .FirstOrDefault();
+            var date = MenuMethods.GetDateFromUser();
+            var day = MenuMethods.GetDayFromDate(date);
             if (day is not null)
             {
-                var lineBreak = Environment.NewLine;
-                Console.WriteLine($"Inside/Outside: {day.Location + lineBreak}" +
-                    $"Avarage temperature: {Math.Round(day.AverageTemperature) + lineBreak}" +
-                    $"Avarage humidity (%): {Math.Round(day.AverageMoisture) + lineBreak}" +
-                    $"Avarage mold risk: {Math.Round(day.AverageMoldRisk) + lineBreak + lineBreak}" +
-                    $"Press any key to continue");
-                Console.ReadKey(true);
+                MenuMethods.ShowDailyDataFromDay(day);
             }
             else
             {
