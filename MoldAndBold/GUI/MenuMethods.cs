@@ -23,7 +23,18 @@ namespace MoldAndBold.GUI
         }
         internal static void ShowDaysOrderedByTemp()
         {
-            ShowOrderedBy(x => x.AverageTemperature);
+            //ShowOrderedBy(x => x.AverageTemperature);
+            var lineBreak = Environment.NewLine;
+
+            var allData = DataLoader.LoadAllDays(Enums.Location.Inside);
+            var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageTemperature).ToList();
+
+            var content = "Top 10 days ordered by temperatures, coldest to hottest" + lineBreak;
+            for (int i = 0; i < 10; i++)
+            {
+                content += $"\tDate: {orderedData[i].Date} - AvgTemp: {orderedData[i].AverageTemperature + lineBreak}";
+            }
+            Console.WriteLine(content);
         }
 
         internal static void ShowDaysOrderedByHumidity()
