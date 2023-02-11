@@ -35,39 +35,21 @@ namespace MoldAndBold.GUI
         {
             var allData = DataLoader.LoadAllDays(Location.Outside);
             var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageTemperature).ToList();
-            var content = "Top 10 days ordered by temperatures, coldest to hottest" + NewLine;
-            for (int i = 0; i < 10; i++)
-            {
-                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - AvgTemp: {Math.Round(orderedData[i].AverageTemperature, 2) + NewLine}";
-            }
-            Console.WriteLine(content + NewLine + "Press any key to continue");
-            Console.ReadKey(true);
+            Helper.PrintDailyDatasAvarageTemp(orderedData);
         }
 
         internal static void ShowOutsideDaysOrderedByHumidity()
         {
             var allData = DataLoader.LoadAllDays(Location.Outside);
             var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => -x.AverageMoisture).ToList();
-            var content = "Top 10 days ordered by humidity, lowest to highest" + NewLine;
-            for (int i = 0; i < 10; i++)
-            {
-                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - AvgHumidity: {Math.Round(orderedData[i].AverageMoisture, 2) + NewLine}";
-            }
-            Console.WriteLine(content + NewLine + "Press any key to continue");
-            Console.ReadKey(true);
+            //Helper.PrintDailyDatasAvarageHumidity(orderedData);
         }
 
         internal static void ShowOutsideDaysOrderedByMoldRisk()
         {
             var allData = DataLoader.LoadAllDays(Location.Outside);
             var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => -x.AverageMoldRisk).ToList();
-            var content = "Top 5 days ordered by mold risk, lowest to highest" + NewLine;
-            for (int i = 0; i < 5; i++)
-            {
-                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - Risk: {Math.Round(orderedData[i].AverageMoldRisk, 2)}% {NewLine}";
-            }
-            Console.WriteLine(content + NewLine + "Press any key to continue");
-            Console.ReadKey(true);
+            //Helper.PrintDailyDatasAvarageMoldRisk(orderedData);
         }
 
         internal static void ShowSpecialDates()

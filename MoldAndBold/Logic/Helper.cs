@@ -33,5 +33,16 @@ namespace MoldAndBold.Logic
                 $"Press any key to continue");
             Console.ReadKey(true);
         }
+
+        internal static void PrintDailyDatasAvarageTemp(List<DailyData> orderedData)
+        {
+            var content = "Top 10 days ordered by temperatures, coldest to hottest" + NewLine;
+            for (int i = 0; i < 10; i++)
+            {
+                content += $"{i + 1}\tDate: {orderedData[i].Date} - AvgTemp: {Math.Round(orderedData[i].AverageTemperature) + NewLine}";
+            }
+            Console.WriteLine(content + NewLine + "Press any key to continue");
+            Console.ReadKey(true);
+        }
     }
 }
