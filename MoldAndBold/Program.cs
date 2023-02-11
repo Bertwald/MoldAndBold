@@ -7,13 +7,13 @@ namespace MoldAndBold
 {
     internal class Program {
         static void Main(string[] args) {
-            Console.CursorVisible = false;
-            while (true) {
-                //
-                ActionSelector.ExecuteActionFromList(new List<Action> { ShowInsideData, ShowOutsideData, ConstructData });
-            }
+            //Console.CursorVisible = false;
+            //while (true) {
+            //    //
+            //    ActionSelector.ExecuteActionFromList(new List<Action> { ShowInsideData, ShowOutsideData, ConstructData });
+            //}
             //var data = DataLoader.LoadAllDays(Location.Inside);
-            //DataLoader.ConstructData();
+            DataLoader.ConstructData();
         }
         private static void DoSomething() {
             return;

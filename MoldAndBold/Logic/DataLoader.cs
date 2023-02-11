@@ -110,7 +110,8 @@ namespace MoldAndBold.Logic
             var options = new JsonSerializerOptions
             {
                 WriteIndented = true,
-                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
+                               new DateOnlyJsonConverter()}
             };
             return JsonSerializer.Serialize(insideYears, options);
         }
@@ -187,7 +188,8 @@ namespace MoldAndBold.Logic
             var options = new JsonSerializerOptions
             {
                 WriteIndented = true,
-                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
+                               new DateOnlyJsonConverter()}
             };
             using (StreamReader reader = new StreamReader(filePath))
             {
@@ -307,14 +309,15 @@ namespace MoldAndBold.Logic
 
             }
 
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
-            };
-            string jsonString = JsonSerializer.Serialize(insideMonthsGroupedByYear.ToList().SelectMany(x => x.SelectMany(x => x)).Select(x => x), options);
-            Console.WriteLine(jsonString);
-            var monthlyDatas = JsonSerializer.Deserialize<List<MonthlyData>>(jsonString, options)!;
+            //var options = new JsonSerializerOptions
+            //{
+            //    WriteIndented = true,
+            //    Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
+            //                   new DateOnlyJsonConverter()}
+            //};
+            //string jsonString = JsonSerializer.Serialize(insideMonthsGroupedByYear.ToList().SelectMany(x => x.SelectMany(x => x)).Select(x => x), options);
+            //Console.WriteLine(jsonString);
+            //var monthlyDatas = JsonSerializer.Deserialize<List<MonthlyData>>(jsonString, options)!;
 
 
 
