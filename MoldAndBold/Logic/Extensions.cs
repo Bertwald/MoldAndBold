@@ -1,9 +1,14 @@
 ﻿using MoldAndBold.Models;
 using System.Reflection;
+using static System.Environment;
 
 namespace MoldAndBold.Logic {
     internal static class StringExtensions {
-
+        public static void WriteWithPromt(this string message, string prompt = "Press ANY key to continue") {
+            Console.Clear();
+            Console.WriteLine(message + NewLine + prompt);
+            Console.ReadKey(true);
+        }
     }
     internal static class DelegateExtensions {
         public static string AsString(this Delegate action) {

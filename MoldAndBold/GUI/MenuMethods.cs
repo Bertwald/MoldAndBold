@@ -18,13 +18,16 @@ namespace MoldAndBold.GUI
         internal static void ShowOrderedBy(Func<AnnualData, double> ordning)
         {
             // list<DailyData> data = loadAll();
-            var ordered = DataLoader.LoadAllDays(Enums.Location.Inside).OrderBy(ordning);
+            var ordered = DataLoader.LoadAllDays(Location.Inside).OrderBy(ordning);
             // Print
         }
 
         internal static void ExitProgram()
         {
             Environment.Exit(0);
+        }
+        internal static void Return() {
+            ; // Do Nothing
         }
     }
 }
