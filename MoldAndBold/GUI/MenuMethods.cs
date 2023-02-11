@@ -13,47 +13,6 @@ namespace MoldAndBold.GUI
 {
     internal static class MenuMethods
     {
-        internal static void ShowInsideData()
-        {
-            ActionSelector.ExecuteActionFromList(new List<Action> { SearchByDate, ShowDaysOrderedByTemp, ShowDaysOrderedByHumidity, ShowDaysOrderedByMoldRisk, ExitProgram });
-        }
-        internal static void ShowOutsideData()
-        {
-            ActionSelector.ExecuteActionFromList(new List<Action> { SearchByDate, ShowDaysOrderedByTemp, ShowDaysOrderedByHumidity, ShowDaysOrderedByMoldRisk, ShowSpecialDates, ExitProgram });
-        }
-        internal static void ShowDaysOrderedByTemp()
-        {
-            //ShowOrderedBy(x => x.AverageTemperature);
-            var lineBreak = Environment.NewLine;
-
-            var allData = DataLoader.LoadAllDays(Enums.Location.Inside);
-            var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageTemperature).ToList();
-
-            var content = "Top 10 days ordered by temperatures, coldest to hottest" + lineBreak;
-            for (int i = 0; i < 10; i++)
-            {
-                content += $"\tDate: {orderedData[i].Date} - AvgTemp: {orderedData[i].AverageTemperature + lineBreak}";
-            }
-            Console.WriteLine(content);
-        }
-
-        internal static void ShowDaysOrderedByHumidity()
-        { }
-        internal static void ShowDaysOrderedByMoldRisk()
-        { }
-        internal static void ShowSpecialDates()
-        {
-            var specialDates = DataLoader.LoadAllDays(Enums.Location.Outside).Select(x => x);
-            string dateInfo = "Special days of the year:" + Environment.NewLine + Environment.NewLine;
-            foreach (var date in specialDates)
-            {
-                dateInfo += date.Year + Environment.NewLine;
-                dateInfo += "First autumn day: " + date.AutumnArrival + Environment.NewLine;
-                dateInfo += "First winter day: " + (date.WinterArrival == null ? "Didnt happen" : date.WinterArrival + Environment.NewLine) + Environment.NewLine + Environment.NewLine;
-            }
-            Console.WriteLine(dateInfo);
-            Console.ReadKey();
-        }
         internal static void SearchByDate()
         { }
         internal static void ShowOrderedBy(Func<AnnualData, double> ordning)

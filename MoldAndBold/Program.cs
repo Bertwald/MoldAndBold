@@ -2,6 +2,8 @@
 using MoldAndBold.Enums;
 using static MoldAndBold.GUI.MenuMethods;
 using MoldAndBold.Logic;
+using static MoldAndBold.GUI.InsideMenuMethods;
+using static MoldAndBold.GUI.OutsideMenuMethods;
 
 namespace MoldAndBold {
     internal class Program {
