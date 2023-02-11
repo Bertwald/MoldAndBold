@@ -12,11 +12,11 @@ namespace MoldAndBold.GUI
     {
         internal static void ShowInsideData()
         {
-            ActionSelector.ExecuteActionFromList(new List<Action> { SearchByDate, ShowDaysOrderedByTemp, ShowDaysOrderedByHumidity, ShowDaysOrderedByMoldRisk });
+            ActionSelector.ExecuteActionFromList(new List<Action> { SearchByDate, ShowDaysOrderedByTemp, ShowDaysOrderedByHumidity, ShowDaysOrderedByMoldRisk, ExitProgram});
         }
         internal static void ShowOutsideData() 
         {
-            ActionSelector.ExecuteActionFromList(new List<Action> { SearchByDate, ShowDaysOrderedByTemp, ShowDaysOrderedByHumidity, ShowDaysOrderedByMoldRisk, ShowSpecialDates });
+            ActionSelector.ExecuteActionFromList(new List<Action> { SearchByDate, ShowDaysOrderedByTemp, ShowDaysOrderedByHumidity, ShowDaysOrderedByMoldRisk, ShowSpecialDates, ExitProgram });
         }
         internal static void ShowDaysOrderedByTemp()
         {
@@ -35,6 +35,9 @@ namespace MoldAndBold.GUI
             // list<DailyData> data = loadAll();
             var ordered = DataLoader.LoadAllDays(Enums.Location.Inside).OrderBy(ordning);
             // Print
+        }
+        internal static void ExitProgram() {
+            Environment.Exit(0);
         }
     }
 }
