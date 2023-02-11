@@ -7,7 +7,7 @@ namespace MoldAndBold.Logic {
     }
     internal static class DelegateExtensions {
         public static string AsString(this Delegate action) {
-            return action.GetMethodInfo().Name;
+            return string.Concat(action.GetMethodInfo().Name.Select(x => Char.IsUpper(x) ? " " + x : x.ToString())).TrimStart(' ');
         }
 
     }
