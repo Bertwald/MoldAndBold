@@ -33,9 +33,11 @@ namespace MoldAndBold.GUI
 
         internal static void ShowOutsideDaysOrderedByTemp()
         {
-            var allData = DataLoader.LoadAllDays(Location.Outside);
-            var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageTemperature).ToList();
-            Helper.PrintDailyDatasAvarageTemp(orderedData);
+            //var allData = DataLoader.LoadAllDays(Location.Outside);
+            //var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageTemperature).ToList();
+            //Helper.PrintDailyDatasAvarageTemp(orderedData);
+
+            MenuMethods.ShowOrderedBy(x => x.AverageTemperature, Location.Outside);
         }
 
         internal static void ShowOutsideDaysOrderedByHumidity()
