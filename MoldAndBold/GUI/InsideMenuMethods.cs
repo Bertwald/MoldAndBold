@@ -11,29 +11,40 @@ namespace MoldAndBold.GUI
     {
         internal static void ShowInsideData()
         {
-            ActionSelector.ExecuteActionFromList(new List<Action> { MenuMethods.SearchByDate, ShowInsideDaysOrderedByTemp, ShowDaysOrderedByHumidity, ShowDaysOrderedByMoldRisk, MenuMethods.ExitProgram });
+            ActionSelector.ExecuteActionFromList(new List<Action> { MenuMethods.SearchByDate, ShowInsideDaysOrderedByTemp, ShowInsideDaysOrderedByHumidity, ShowInsideDaysOrderedByMoldRisk, MenuMethods.ExitProgram });
         }
 
         internal static void ShowInsideDaysOrderedByTemp()
         {
-            //ShowOrderedBy(x => x.AverageTemperature);
             var lineBreak = Environment.NewLine;
-
             var allData = DataLoader.LoadAllDays(Enums.Location.Inside);
             var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageTemperature).ToList();
-
             var content = "Top 10 days ordered by temperatures, coldest to hottest" + lineBreak;
             for (int i = 0; i < 10; i++)
             {
-                content += $"\tDate: {orderedData[i].Date} - AvgTemp: {orderedData[i].AverageTemperature + lineBreak}";
+                content += $"{i + 1}\tDate: {orderedData[i].Date} - AvgTemp: {orderedData[i].AverageTemperature + lineBreak}";
             }
-            Console.WriteLine(content + "Press any key to continue");
+            Console.WriteLine(content + lineBreak + "Press any key to continue");
             Console.ReadKey(true);
         }
 
-        internal static void ShowDaysOrderedByHumidity()
-        { }
-        internal static void ShowDaysOrderedByMoldRisk()
-        { }
+        internal static void ShowInsideDaysOrderedByHumidity()
+        {
+            var lineBreak = Environment.NewLine;
+            var allData = DataLoader.LoadAllDays(Enums.Location.Inside);
+            var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageMoisture).ToList();
+            var content = "Top 10 days ordered by humidity, lowest to highest" + lineBreak;
+            for (int i = 0; i < 10; i++)
+            {
+                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - AvgHumidity: {orderedData[i].AverageMoisture + lineBreak}";
+            }
+            Console.WriteLine(content + lineBreak + "Press any key to continue");
+            Console.ReadKey(true);
+        }
+
+        internal static void ShowInsideDaysOrderedByMoldRisk()
+        {
+        
+        }
     }
 }

@@ -11,30 +11,43 @@ namespace MoldAndBold.GUI
     {
         internal static void ShowOutsideData()
         {
-            ActionSelector.ExecuteActionFromList(new List<Action> { MenuMethods.SearchByDate, ShowOutsideDaysOrderedByTemp, ShowDaysOrderedByHumidity, ShowDaysOrderedByMoldRisk, ShowSpecialDates, MenuMethods.ExitProgram });
+            ActionSelector.ExecuteActionFromList(new List<Action> { MenuMethods.SearchByDate, ShowOutsideDaysOrderedByTemp, ShowOutsideDaysOrderedByHumidity, ShowOutsideDaysOrderedByMoldRisk, ShowSpecialDates, MenuMethods.ExitProgram });
         }
 
         internal static void ShowOutsideDaysOrderedByTemp()
         {
             //ShowOrderedBy(x => x.AverageTemperature);
             var lineBreak = Environment.NewLine;
-
             var allData = DataLoader.LoadAllDays(Enums.Location.Outside);
             var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageTemperature).ToList();
-
             var content = "Top 10 days ordered by temperatures, coldest to hottest" + lineBreak;
             for (int i = 0; i < 10; i++)
             {
-                content += $"\tDate: {orderedData[i].Date} - AvgTemp: {orderedData[i].AverageTemperature + lineBreak}";
+                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - AvgTemp: {orderedData[i].AverageTemperature + lineBreak}";
             }
-            Console.WriteLine(content + "Press any key to continue");
+            Console.WriteLine(content + lineBreak + "Press any key to continue");
             Console.ReadKey(true);
         }
 
-        internal static void ShowDaysOrderedByHumidity()
-        { }
-        internal static void ShowDaysOrderedByMoldRisk()
-        { }
+        internal static void ShowOutsideDaysOrderedByHumidity()
+        {
+            var lineBreak = Environment.NewLine;
+            var allData = DataLoader.LoadAllDays(Enums.Location.Outside);
+            var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageMoisture).ToList();
+            var content = "Top 10 days ordered by humidity, lowest to highest" + lineBreak;
+            for (int i = 0; i < 10; i++)
+            {
+                content += $"Number: {i + 1}\tDate: {orderedData[i].Date} - AvgHumidity: {orderedData[i].AverageMoisture + lineBreak}";
+            }
+            Console.WriteLine(content + lineBreak + "Press any key to continue");
+            Console.ReadKey(true);
+        }
+
+        internal static void ShowOutsideDaysOrderedByMoldRisk()
+        {
+        
+        }
+
         internal static void ShowSpecialDates()
         {
             var specialDates = DataLoader.LoadAllDays(Enums.Location.Outside).Select(x => x);
