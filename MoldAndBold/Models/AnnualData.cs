@@ -1,5 +1,4 @@
-﻿
-using MoldAndBold.Enums;
+﻿using MoldAndBold.Enums;
 using System.Text.Json.Serialization;
 
 namespace MoldAndBold.Models {

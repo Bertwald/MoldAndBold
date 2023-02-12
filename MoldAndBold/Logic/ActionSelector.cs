@@ -1,5 +1,4 @@
-﻿
-using MoldAndBold.GUI;
+﻿using MoldAndBold.GUI;
 
 namespace MoldAndBold.Logic
 {
