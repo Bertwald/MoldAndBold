@@ -35,14 +35,38 @@ namespace MoldAndBold.Logic
         {
             Console.Clear();
             var content = $"Top {number} days ordered by {orderedBy}" + NewLine;
+
+            Console.WriteLine(content);
+            //Print First Row
+            Console.WriteLine("┌" + new string('─', 56) + "┐");
+            Console.Write("│ ");
+            PrintRainbow('♥', 54); 
+            Console.WriteLine(" │");
+            Console.WriteLine("│" + new string(' ', 5) + "Date" + new string(' ', 7) + "Temperature" + new string(' ', 5) + "Humidity" + new string(' ', 5) + "MoldIndex" + new string(' ', 2) + "│");
+            var toPrint = ordered.Take(number);
+            foreach(var dailyData in toPrint) {
+                Console.WriteLine("│" + dailyData.Date.ToString().PadLeft(12) + Math.Round(dailyData.AverageTemperature, 2).ToString().PadLeft(12) + Math.Round(dailyData.AverageMoisture, 2).ToString().PadLeft(15) + Math.Round(dailyData.AverageMoldRisk, 2).ToString().PadLeft(10) + new string(' ', 7) + "│");
+            }
+            Console.WriteLine("└" + new string('─', 56) + "┘");
+            /*
             for (int i = 0; i < number; i++)
             {
                 content += $"[{i + 1}] Date: {ordered[i].Date} - AvgTemp: {Math.Round(ordered[i].AverageTemperature, 2) + NewLine}" +
                     $"\tAvgHumidity: {Math.Round(ordered[i].AverageMoisture , 2) + NewLine}" +
-                    $"\tAvgMoldRisk: {Math.Round(ordered[i].AverageMoldRisk, 2)} %" + NewLine;
+                    $"\tAvgMoldRisk: {Math.Round(ordered[i].AverageMoldRisk, 2)}" + NewLine;
             }
-            Console.WriteLine(content + NewLine + "Press any key to continue");
+            */
+            Console.WriteLine(NewLine + "Press any key to continue");
             Console.ReadKey(true);
+        }
+
+        private static void PrintRainbow(char symbol, int number) {
+            ConsoleColor[] colors = { ConsoleColor.Red, ConsoleColor.DarkYellow, ConsoleColor.Yellow, ConsoleColor.Green, ConsoleColor.Cyan, ConsoleColor.Blue, ConsoleColor.Magenta };
+            for(int n = 0; n< number; n++) {
+                Console.ForegroundColor = colors[n % colors.Length];
+                Console.Write(symbol);
+            }
+            Console.ResetColor();
         }
 
         internal static void ShowDailyData(List<DailyData> orderedData, string orderedBy)
