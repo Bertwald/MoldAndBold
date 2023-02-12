@@ -15,10 +15,10 @@ namespace MoldAndBold.GUI
     internal static class MenuMethods
     {
 
-        internal static void ShowOrderedBy(Func<DailyData, double> ordering, Location location)
+        internal static void ShowOrderedBy(Func<DailyData, double> ordering, Location location, string orderedBy)
         {
-            var ordered = (DataLoader.LoadAllDays(location).ExtractDays()).OrderBy(ordering);
-            // Print
+            var ordered = (DataLoader.LoadAllDays(location).ExtractDays()).OrderBy(ordering).ToList();
+            Helper.ShowDailyData(ordered, orderedBy);
         }
 
         internal static void ExitProgram()

@@ -33,25 +33,17 @@ namespace MoldAndBold.GUI
 
         internal static void ShowOutsideDaysOrderedByTemp()
         {
-            //var allData = DataLoader.LoadAllDays(Location.Outside);
-            //var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageTemperature).ToList();
-            //Helper.PrintDailyDatasAvarageTemp(orderedData);
-
-            MenuMethods.ShowOrderedBy(x => x.AverageTemperature, Location.Outside);
+            MenuMethods.ShowOrderedBy(x => x.AverageTemperature, Location.Outside, "avarage temperature, coldest to hottest");
         }
 
         internal static void ShowOutsideDaysOrderedByHumidity()
         {
-            var allData = DataLoader.LoadAllDays(Location.Outside);
-            var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => -x.AverageMoisture).ToList();
-            //Helper.PrintDailyDatasAvarageHumidity(orderedData);
+            MenuMethods.ShowOrderedBy(x => x.AverageMoisture, Location.Outside, "avarage humidity, lowest to highest");
         }
 
         internal static void ShowOutsideDaysOrderedByMoldRisk()
         {
-            var allData = DataLoader.LoadAllDays(Location.Outside);
-            var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => -x.AverageMoldRisk).ToList();
-            //Helper.PrintDailyDatasAvarageMoldRisk(orderedData);
+            MenuMethods.ShowOrderedBy(x => x.AverageMoldRisk, Location.Outside, "avarage moldrisk, lowest to highest");
         }
 
         internal static void ShowSpecialDates()

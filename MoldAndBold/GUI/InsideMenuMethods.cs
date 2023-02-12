@@ -33,23 +33,17 @@ namespace MoldAndBold.GUI
 
         internal static void ShowInsideDaysOrderedByTemp()
         {
-            var allData = DataLoader.LoadAllDays(Location.Inside);
-            var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => x.AverageTemperature).ToList();
-            Helper.PrintDailyDatasAvarageTemp(orderedData);
+            MenuMethods.ShowOrderedBy(x => x.AverageTemperature, Location.Inside, "avarage temperature, coldest to hottest");
         }
 
         internal static void ShowInsideDaysOrderedByHumidity()
         {
-            var allData = DataLoader.LoadAllDays(Location.Inside);
-            var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => -x.AverageMoisture).ToList();
-            //Helper.PrintDailyDatasAvarageHumidity(orderedData);
+            MenuMethods.ShowOrderedBy(x => x.AverageMoisture, Location.Inside, "avarage humidity, lowest to highest");
         }
 
         internal static void ShowInsideDaysOrderedByMoldRisk()
         {
-            var allData = DataLoader.LoadAllDays(Location.Inside);
-            var orderedData = allData.SelectMany(x => x.Months.SelectMany(x => x.Days)).OrderBy(x => -x.AverageMoldRisk).ToList();
-            //Helper.PrintDailyDatasAvarageMoldRisk(orderedData);
+            MenuMethods.ShowOrderedBy(x => x.AverageMoldRisk, Location.Inside, "avarage mold risk, lowest to highest");
         }
     }
 }
