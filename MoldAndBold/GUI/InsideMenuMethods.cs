@@ -1,20 +1,13 @@
-﻿using MoldAndBold.Logic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Environment;
+﻿using MoldAndBold.Enums;
+using MoldAndBold.Logic;
 using static MoldAndBold.GUI.MenuMethods;
-using MoldAndBold.Enums;
 
-namespace MoldAndBold.GUI
-{
+namespace MoldAndBold.GUI {
     internal class InsideMenuMethods
     {
-        internal static void ShowInsideData()
+        internal static void DailyIndoorData()
         {
-            ActionSelector.ExecuteActionFromList(new List<Action> { SearchByDate, ShowInsideDaysOrderedByTemp, ShowInsideDaysOrderedByHumidity, ShowInsideDaysOrderedByMoldRisk, MenuMethods.Return, MenuMethods.ExitProgram });
+            ActionSelector.ExecuteActionFromList(new List<Action> { SearchByDate, ShowDaysOrderedByTemp, ShowDaysOrderedByHumidity, ShowDaysOrderedByMoldRisk, MenuMethods.Return, MenuMethods.ExitProgram });
         }
 
         internal static void SearchByDate()
@@ -23,17 +16,17 @@ namespace MoldAndBold.GUI
             ShowByDate(date, Location.Inside);
         }
 
-        internal static void ShowInsideDaysOrderedByTemp()
+        internal static void ShowDaysOrderedByTemp()
         {
             MenuMethods.ShowOrderedBy(x => x.AverageTemperature, Location.Inside, "average temperature, coldest to hottest");
         }
 
-        internal static void ShowInsideDaysOrderedByHumidity()
+        internal static void ShowDaysOrderedByHumidity()
         {
             MenuMethods.ShowOrderedBy(x => -x.AverageMoisture, Location.Inside, "average humidity, highest to lowest");
         }
 
-        internal static void ShowInsideDaysOrderedByMoldRisk()
+        internal static void ShowDaysOrderedByMoldRisk()
         {
             MenuMethods.ShowOrderedBy(x => -x.AverageMoldRisk, Location.Inside, "average mold risk, highest to lowest");
         }

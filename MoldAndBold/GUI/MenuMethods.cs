@@ -1,14 +1,7 @@
 ﻿using MoldAndBold.Enums;
 using MoldAndBold.Logic;
 using MoldAndBold.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+using static System.Environment;
 
 namespace MoldAndBold.GUI
 {
@@ -35,6 +28,18 @@ namespace MoldAndBold.GUI
         }
         internal static void Return() {
             ; // Do Nothing
+        }
+        internal static void ShowSpecialDates() {
+            Console.Clear();
+            var specialDates = DataLoader.LoadAllDays(Location.Outside);
+            string dateInfo = "Special days of the year:" + NewLine + NewLine;
+            foreach (var date in specialDates) {
+                dateInfo += date.Year + NewLine;
+                dateInfo += "First autumn day: " + date.AutumnArrival + NewLine;
+                dateInfo += "First winter day: " + (date.WinterArrival == null ? "Didnt happen" : date.WinterArrival + NewLine) + NewLine + NewLine;
+            }
+            Console.WriteLine(dateInfo);
+            Console.ReadKey();
         }
     }
 }
