@@ -20,6 +20,7 @@ namespace MoldAndBold.Models {
             Location = mdays[0].Location;
             AverageMoisture = mdays.Select(x => x.AverageMoisture).Average();
             AverageTemperature = mdays.Select(x => x.AverageTemperature).Average();
+            AverageMoldRisk= mdays.Select(x => x.AverageMoldRisk).Average();
             CompleteData = IsMonthlyDatacomplete(mdays[0].Date.Month, mdays.Count);
         } 
 
